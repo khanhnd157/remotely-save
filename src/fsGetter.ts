@@ -11,6 +11,7 @@ import { FakeFsDropbox } from "./fsDropbox";
 import { FakeFsOnedrive } from "./fsOnedrive";
 import { FakeFsS3 } from "./fsS3";
 import { FakeFsWebdav } from "./fsWebdav";
+import { FakeFsSftp } from "./fsSftp";
 import { FakeFsWebdis } from "./fsWebdis";
 
 /**
@@ -78,6 +79,12 @@ export function getClient(
       return new FakeFsKoofr(settings.koofr, vaultName, saveUpdatedConfigFunc);
     case "azureblobstorage":
       return new FakeFsAzureBlobStorage(settings.azureblobstorage, vaultName);
+    case "sftp":
+      return new FakeFsSftp(
+        settings.sftp,
+        vaultName,
+        saveUpdatedConfigFunc
+      );
     default:
       throw Error(`cannot init client for serviceType=${settings.serviceType}`);
   }

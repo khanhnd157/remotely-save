@@ -32,6 +32,7 @@ export const exportQrCodeUri = async (
     delete settings2.yandexdisk;
     delete settings2.koofr;
     delete settings2.azureblobstorage;
+    delete settings2.sftp;
     delete settings2.pro;
   } else if (exportFields === "s3") {
     settings2 = { s3: cloneDeep(settings.s3) };
@@ -59,6 +60,8 @@ export const exportQrCodeUri = async (
     settings2 = { koofr: cloneDeep(settings.koofr) };
   } else if (exportFields === "azureblobstorage") {
     settings2 = { azureblobstorage: cloneDeep(settings.azureblobstorage) };
+  } else if (exportFields === "sftp") {
+    settings2 = { sftp: cloneDeep(settings.sftp) };
   }
 
   delete settings2.vaultRandomID;
