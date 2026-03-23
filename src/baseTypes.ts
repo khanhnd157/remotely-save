@@ -6,6 +6,7 @@
 import type {
   AzureBlobStorageConfig,
   BoxConfig,
+  FilenConfig,
   GoogleDriveConfig,
   KoofrConfig,
   OnedriveFullConfig,
@@ -40,7 +41,8 @@ export type SUPPORTED_SERVICES_TYPE =
   | "yandexdisk"
   | "koofr"
   | "azureblobstorage"
-  | "sftp";
+  | "sftp"
+  | "filen";
 
 export type SUPPORTED_SERVICES_TYPE_WITH_REMOTE_BASE_DIR = Exclude<
   SUPPORTED_SERVICES_TYPE,
@@ -171,6 +173,7 @@ export interface RemotelySavePluginSettings {
   koofr: KoofrConfig;
   azureblobstorage: AzureBlobStorageConfig;
   sftp: SftpConfig;
+  filen: FilenConfig;
 
   password: string;
   serviceType: SUPPORTED_SERVICES_TYPE;

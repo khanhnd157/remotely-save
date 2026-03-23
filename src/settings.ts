@@ -23,6 +23,7 @@ import type {
 import cloneDeep from "lodash/cloneDeep";
 import { generateAzureBlobStorageSettingsPart } from "../pro/src/settingsAzureBlobStorage";
 import { generateBoxSettingsPart } from "../pro/src/settingsBox";
+import { generateFilenSettingsPart } from "../pro/src/settingsFilen";
 import { generateClearDupFilesSettingsPart } from "../pro/src/settingsClearDupFiles";
 import { generateGoogleDriveSettingsPart } from "../pro/src/settingsGoogleDrive";
 import { generateKoofrSettingsPart } from "../pro/src/settingsKoofr";
@@ -2090,6 +2091,15 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
     );
 
     //////////////////////////////////////////////////
+    // below for filen
+    //////////////////////////////////////////////////
+
+    const { filenDiv, filenAllowedToUsedDiv, filenNotShowUpHintSetting } =
+      generateFilenSettingsPart(containerEl, t, this.app, this.plugin, () =>
+        this.plugin.saveSettings()
+      );
+
+    //////////////////////////////////////////////////
     // below for general chooser (part 2/2)
     //////////////////////////////////////////////////
 
@@ -2133,6 +2143,7 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
           "azureblobstorage",
           t("settings_chooseservice_azureblobstorage")
         );
+        dropdown.addOption("filen", t("settings_chooseservice_filen"));
 
         dropdown
           .setValue(this.plugin.settings.serviceType)
@@ -2189,6 +2200,10 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
             azureBlobStorageDiv.toggleClass(
               "azureblobstorage-hide",
               this.plugin.settings.serviceType !== "azureblobstorage"
+            );
+            filenDiv.toggleClass(
+              "filen-hide",
+              this.plugin.settings.serviceType !== "filen"
             );
 
             await this.plugin.saveSettings();
@@ -2851,6 +2866,16 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
             this.app,
             this.plugin,
             "azureblobstorage"
+          ).open();
+        });
+      })
+      .addButton(async (button) => {
+        button.setButtonText(t("settings_export_filen_button"));
+        button.onClick(async () => {
+          new ExportSettingsQrCodeModal(
+            this.app,
+            this.plugin,
+            "filen"
           ).open();
         });
       });

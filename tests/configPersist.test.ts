@@ -43,6 +43,9 @@ const DEFAULT_SETTINGS: RemotelySavePluginSettings = {
   sftp: {
     host: "127.0.0.1",
   } as any,
+  filen: {
+    email: "test@example.com",
+  } as any,
   password: "password",
   serviceType: "s3",
   currLogLevel: "info",

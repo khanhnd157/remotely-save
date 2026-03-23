@@ -137,6 +137,7 @@ module.exports = {
     obsidian: "commonjs2 obsidian",
     "ssh2-sftp-client": "commonjs2 ssh2-sftp-client",
     "basic-ftp": "commonjs2 basic-ftp",
+    "@filen/sdk": "commonjs2 @filen/sdk",
     "clean-stack": "commonjs2 clean-stack",
   },
   optimization: {
