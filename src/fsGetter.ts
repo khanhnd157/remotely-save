@@ -11,6 +11,7 @@ import { FakeFsDropbox } from "./fsDropbox";
 import { FakeFsOnedrive } from "./fsOnedrive";
 import { FakeFsS3 } from "./fsS3";
 import { FakeFsWebdav } from "./fsWebdav";
+import { FakeFsFilen } from "../pro/src/fsFilen";
 import { FakeFsSftp } from "./fsSftp";
 import { FakeFsWebdis } from "./fsWebdis";
 
@@ -82,6 +83,12 @@ export function getClient(
     case "sftp":
       return new FakeFsSftp(
         settings.sftp,
+        vaultName,
+        saveUpdatedConfigFunc
+      );
+    case "filen":
+      return new FakeFsFilen(
+        settings.filen,
         vaultName,
         saveUpdatedConfigFunc
       );

@@ -33,7 +33,8 @@ export type PRO_FEATURE_TYPE =
   | "feature-pcloud"
   | "feature-yandex_disk"
   | "feature-koofr"
-  | "feature-azure_blob_storage";
+  | "feature-azure_blob_storage"
+  | "feature-filen";
 
 export interface FeatureInfo {
   featureName: PRO_FEATURE_TYPE;
@@ -174,6 +175,25 @@ export interface AzureBlobStorageConfig {
 //////////////////////////////////////////////////////////
 
 export const COMMAND_CALLBACK_ONEDRIVEFULL = "remotely-save-cb-onedrivefull";
+
+///////////////////////////////////////////////////////////
+// Filen
+//////////////////////////////////////////////////////////
+
+export type FilenAuthType = "email" | "apikey";
+
+export interface FilenConfig {
+  authType: FilenAuthType;
+  email: string;
+  password: string;
+  apiKey: string;
+  remoteBaseDir?: string;
+  kind: "filen";
+}
+
+///////////////////////////////////////////////////////////
+// Onedrive (Full)
+//////////////////////////////////////////////////////////
 
 export interface OnedriveFullConfig {
   accessToken: string;
