@@ -51,6 +51,9 @@ esbuild
       "http",
       "https",
       "vm",
+      "ssh2-sftp-client",
+      "basic-ftp",
+      "@filen/sdk",
       // "process",
       // ...builtins
     ],
