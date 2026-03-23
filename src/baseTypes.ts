@@ -39,7 +39,8 @@ export type SUPPORTED_SERVICES_TYPE =
   | "pcloud"
   | "yandexdisk"
   | "koofr"
-  | "azureblobstorage";
+  | "azureblobstorage"
+  | "sftp";
 
 export type SUPPORTED_SERVICES_TYPE_WITH_REMOTE_BASE_DIR = Exclude<
   SUPPORTED_SERVICES_TYPE,
@@ -128,6 +129,17 @@ export interface WebdisConfig {
   remoteBaseDir?: string;
 }
 
+export type SftpProtocolType = "sftp" | "ftp" | "ftps";
+
+export interface SftpConfig {
+  protocol: SftpProtocolType;
+  host: string;
+  port: string;
+  username: string;
+  password: string;
+  remoteBaseDir?: string;
+}
+
 export type SyncDirectionType =
   | "bidirectional"
   | "incremental_pull_only"
@@ -158,6 +170,7 @@ export interface RemotelySavePluginSettings {
   yandexdisk: YandexDiskConfig;
   koofr: KoofrConfig;
   azureblobstorage: AzureBlobStorageConfig;
+  sftp: SftpConfig;
 
   password: string;
   serviceType: SUPPORTED_SERVICES_TYPE;

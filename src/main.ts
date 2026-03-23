@@ -91,6 +91,7 @@ import {
   setConfigBySuccessfullAuthInplace as setConfigBySuccessfullAuthInplaceOnedrive,
 } from "./fsOnedrive";
 import { DEFAULT_S3_CONFIG } from "./fsS3";
+import { DEFAULT_SFTP_CONFIG } from "./fsSftp";
 import { DEFAULT_WEBDAV_CONFIG } from "./fsWebdav";
 import { DEFAULT_WEBDIS_CONFIG } from "./fsWebdis";
 import { I18n } from "./i18n";
@@ -125,6 +126,7 @@ const DEFAULT_SETTINGS: RemotelySavePluginSettings = {
   yandexdisk: DEFAULT_YANDEXDISK_CONFIG,
   koofr: DEFAULT_KOOFR_CONFIG,
   azureblobstorage: DEFAULT_AZUREBLOBSTORAGE_CONFIG,
+  sftp: DEFAULT_SFTP_CONFIG,
   password: "",
   serviceType: "s3",
   currLogLevel: "info",

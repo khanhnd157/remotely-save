@@ -1839,6 +1839,166 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
       });
 
     //////////////////////////////////////////////////
+    // below for SFTP / FTP
+    //////////////////////////////////////////////////
+
+    const sftpDiv = containerEl.createEl("div", { cls: "sftp-hide" });
+    sftpDiv.toggleClass(
+      "sftp-hide",
+      this.plugin.settings.serviceType !== "sftp"
+    );
+
+    sftpDiv.createEl("h2", { text: t("settings_sftp") });
+
+    const sftpLongDescDiv = sftpDiv.createEl("div", {
+      cls: "settings-long-desc",
+    });
+
+    sftpLongDescDiv.createEl("p", {
+      text: t("settings_sftp_disclaimer1"),
+      cls: "sftp-disclaimer",
+    });
+
+    if (!Platform.isDesktopApp) {
+      sftpLongDescDiv.createEl("p", {
+        text: t("settings_sftp_desktop_only"),
+        cls: "sftp-desktop-only-warning",
+      });
+    }
+
+    sftpLongDescDiv.createEl("p", {
+      text: t("settings_sftp_folder", {
+        remoteBaseDir:
+          this.plugin.settings.sftp.remoteBaseDir || this.app.vault.getName(),
+      }),
+    });
+
+    new Setting(sftpDiv)
+      .setName(t("settings_sftp_protocol"))
+      .setDesc(t("settings_sftp_protocol_desc"))
+      .addDropdown((dropdown) => {
+        dropdown.addOption("sftp", t("settings_sftp_protocol_sftp"));
+        dropdown.addOption("ftp", t("settings_sftp_protocol_ftp"));
+        dropdown.addOption("ftps", t("settings_sftp_protocol_ftps"));
+        dropdown
+          .setValue(this.plugin.settings.sftp.protocol)
+          .onChange(async (val: any) => {
+            this.plugin.settings.sftp.protocol = val;
+            // Auto-update port when switching protocol
+            if (val === "sftp" && (this.plugin.settings.sftp.port === "21" || this.plugin.settings.sftp.port === "")) {
+              this.plugin.settings.sftp.port = "22";
+            } else if ((val === "ftp" || val === "ftps") && (this.plugin.settings.sftp.port === "22" || this.plugin.settings.sftp.port === "")) {
+              this.plugin.settings.sftp.port = "21";
+            }
+            await this.plugin.saveSettings();
+          });
+      });
+
+    new Setting(sftpDiv)
+      .setName(t("settings_sftp_host"))
+      .setDesc(t("settings_sftp_host_desc"))
+      .addText((text) =>
+        text
+          .setPlaceholder("example.com")
+          .setValue(this.plugin.settings.sftp.host)
+          .onChange(async (value) => {
+            this.plugin.settings.sftp.host = value.trim();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(sftpDiv)
+      .setName(t("settings_sftp_port"))
+      .setDesc(t("settings_sftp_port_desc"))
+      .addText((text) =>
+        text
+          .setPlaceholder(this.plugin.settings.sftp.protocol === "sftp" ? "22" : "21")
+          .setValue(this.plugin.settings.sftp.port)
+          .onChange(async (value) => {
+            this.plugin.settings.sftp.port = value.trim();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(sftpDiv)
+      .setName(t("settings_sftp_user"))
+      .setDesc(t("settings_sftp_user_desc"))
+      .addText((text) => {
+        wrapTextWithPasswordHide(text);
+        text
+          .setPlaceholder("")
+          .setValue(this.plugin.settings.sftp.username)
+          .onChange(async (value) => {
+            this.plugin.settings.sftp.username = value.trim();
+            await this.plugin.saveSettings();
+          });
+      });
+
+    new Setting(sftpDiv)
+      .setName(t("settings_sftp_password"))
+      .setDesc(t("settings_sftp_password_desc"))
+      .addText((text) => {
+        wrapTextWithPasswordHide(text);
+        text
+          .setPlaceholder("")
+          .setValue(this.plugin.settings.sftp.password)
+          .onChange(async (value) => {
+            this.plugin.settings.sftp.password = value.trim();
+            await this.plugin.saveSettings();
+          });
+      });
+
+    let newSftpRemoteBaseDir =
+      this.plugin.settings.sftp.remoteBaseDir || "";
+    new Setting(sftpDiv)
+      .setName(t("settings_remotebasedir"))
+      .setDesc(t("settings_remotebasedir_desc"))
+      .addText((text) =>
+        text
+          .setPlaceholder(this.app.vault.getName())
+          .setValue(newSftpRemoteBaseDir)
+          .onChange((value) => {
+            newSftpRemoteBaseDir = value.trim();
+          })
+      )
+      .addButton((button) => {
+        button.setButtonText(t("confirm"));
+        button.onClick(() => {
+          new ChangeRemoteBaseDirModal(
+            this.app,
+            this.plugin,
+            newSftpRemoteBaseDir,
+            "sftp"
+          ).open();
+        });
+      });
+
+    new Setting(sftpDiv)
+      .setName(t("settings_checkonnectivity"))
+      .setDesc(t("settings_checkonnectivity_desc"))
+      .addButton(async (button) => {
+        button.setButtonText(t("settings_checkonnectivity_button"));
+        button.onClick(async () => {
+          new Notice(t("settings_checkonnectivity_checking"));
+          const client = getClient(
+            this.plugin.settings,
+            this.app.vault.getName(),
+            () => this.plugin.saveSettings()
+          );
+          const errors = { msg: "" };
+          const res = await client.checkConnect((err: any) => {
+            errors.msg = `${err}`;
+          });
+          if (res) {
+            new Notice(t("settings_sftp_connect_succ"));
+          } else {
+            new Notice(t("settings_sftp_connect_fail"));
+            new Notice(errors.msg);
+          }
+        });
+      });
+
+    //////////////////////////////////////////////////
     // below for Onedrive (Full)
     //////////////////////////////////////////////////
 
@@ -1944,6 +2104,9 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
         dropdown.addOption("webdav", t("settings_chooseservice_webdav"));
         dropdown.addOption("onedrive", t("settings_chooseservice_onedrive"));
         dropdown.addOption("webdis", t("settings_chooseservice_webdis"));
+        if (Platform.isDesktopApp) {
+          dropdown.addOption("sftp", t("settings_chooseservice_sftp"));
+        }
 
         dropdown.addOption("separator line", "-----");
         (dropdown.selectEl.lastChild as HTMLElement).setAttribute(
@@ -1998,6 +2161,10 @@ export class RemotelySaveSettingTab extends PluginSettingTab {
             webdisDiv.toggleClass(
               "webdis-hide",
               this.plugin.settings.serviceType !== "webdis"
+            );
+            sftpDiv.toggleClass(
+              "sftp-hide",
+              this.plugin.settings.serviceType !== "sftp"
             );
             googleDriveDiv.toggleClass(
               "googledrive-hide",
